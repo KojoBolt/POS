@@ -1,38 +1,66 @@
+
 import { Clock, CheckCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { db } from '../../firebase/config';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 export default function RecentSales() {
-  const salesData = [
-    {
-      name: "John Doe",
-      time: "10:30 AM",
-      amount: "$85.50",
-      status: "completed"
-    },
-    {
-      name: "Jane Smith",
-      time: "10:15 AM",
-      amount: "$132.25",
-      status: "completed"
-    },
-    {
-      name: "Bob Johnson",
-      time: "10:00 AM",
-      amount: "$67.80",
-      status: "completed"
-    },
-    {
-      name: "Alice Brown",
-      time: "9:45 AM",
-      amount: "$245.00",
-      status: "pending"
-    },
-    {
-      name: "Charlie Wilson",
-      time: "9:30 AM",
-      amount: "$89.95",
-      status: "completed"
-    }
-  ];
+  const [salesData, setSalesData] = useState([]);
+
+  useEffect(() => {
+    // Fetch the 10 most recent paid orders
+    const q = query(
+      collection(db, 'orders'),
+      orderBy('createdAt', 'desc'),
+      limit(10)
+    );
+    const unsub = onSnapshot(q, (snapshot) => {
+      const customerMap = new Map();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (Array.isArray(data.services)) {
+          let total = 0;
+          data.services.forEach(service => {
+            total += service.price || 0;
+          });
+          const name = data.customerName || 'N/A';
+          const key = name + (data.customerPhone || '');
+          // If customer already exists, accumulate amount and keep latest time/status
+          if (customerMap.has(key)) {
+            const prev = customerMap.get(key);
+            customerMap.set(key, {
+              ...prev,
+              amount: prev.amount + total,
+              // Use the latest time/status if this order is newer
+              time: (data.createdAt && data.createdAt.toDate && (!prev.time || data.createdAt.toDate() > prev.rawDate))
+                ? data.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : prev.time,
+              rawDate: (data.createdAt && data.createdAt.toDate && (!prev.time || data.createdAt.toDate() > prev.rawDate))
+                ? data.createdAt.toDate()
+                : prev.rawDate,
+              status: data.paymentStatus === 'Paid' ? 'completed' : 'pending',
+            });
+          } else {
+            customerMap.set(key, {
+              name,
+              time: data.createdAt && data.createdAt.toDate ?
+                data.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+              rawDate: data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null,
+              amount: total,
+              status: data.paymentStatus === 'Paid' ? 'completed' : 'pending',
+            });
+          }
+        }
+      });
+      // Sort by latest time
+      const grouped = Array.from(customerMap.values())
+        .sort((a, b) => (b.rawDate || 0) - (a.rawDate || 0))
+        .slice(0, 5)
+        .map(({ rawDate, ...rest }) => ({ ...rest, amount: `₵${rest.amount.toLocaleString()}` }));
+      setSalesData(grouped);
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-w-[100%] md:min-w-[400px] lg:min-w-[500px]">

@@ -1,63 +1,50 @@
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip
+} from 'recharts';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+function getHourLabel(hour) {
+  if (hour === 0) return "12am";
+  if (hour < 12) return `${hour}am`;
+  if (hour === 12) return "12pm";
+  return `${hour - 12}pm`;
+}
 
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: { mode: "index", intersect: false },
-  },
-  elements: {
-    line: { tension: 0.4 },
-  },
-  scales: {
-    x: {
-      ticks: {
-        maxRotation: 45,
-        minRotation: 0,
-        font: { size: 10 },
-      },
-    },
-    y: {
-      ticks: {
-        font: { size: 10 },
-      },
-    },
-  },
-};
+export default function SalesLineChart({ data = [] }) {
+  // Convert [{hour, total}] to [{hour: label, sales: total}]
+  const salesData = data.length
+    ? data.map((d) => ({ hour: getHourLabel(d.hour), sales: d.total }))
+    : Array.from({ length: 24 }, (_, i) => ({ hour: getHourLabel(i), sales: 0 }));
 
-const labels = ["09:00 am", "12:00 pm", "03:00 pm", "06:00 pm", "09:00 pm", "12:00 am"];
-
-const data = {
-  labels,
-  datasets: [
-    {
-      label: "Sales",
-      data: [400, 300, 500, 600, 700, 650],
-      borderColor: "#6366F1",
-      backgroundColor: "rgba(99, 102, 241, 0.2)",
-      fill: true,
-    },
-  ],
-};
-
-export default function SalesLineChart() {
   return (
     <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl mx-auto">
       <div className="relative h-56 sm:h-64 md:h-80">
-        <Line options={options} data={data} />
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={salesData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis
+              dataKey="hour"
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              fontSize={12}
+            />
+            <YAxis tickFormatter={(value) => `₵${value}`} />
+            <Tooltip formatter={(value) => [`₵${value}`, 'Sales']} />
+            <Area
+              type="monotone"
+              dataKey="sales"
+              stroke="#7C3AED"
+              fill="#7C3AED"
+              fillOpacity={0.3}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

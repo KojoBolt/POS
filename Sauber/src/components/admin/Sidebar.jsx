@@ -1,43 +1,101 @@
 import { Home, ShoppingBag, Users, Settings, FileText, Box, CreditCard, BadgeCent  } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div className="fixed left-0 top-0 w-64 bg-white shadow-md h-screen p-4 lg:flex flex-col hidden overflow-y-auto z-10">
+    <div className="fixed left-0 top-0 w-64 bg-white shadow-md h-screen p-4 lg:flex flex-col hidden overflow-y-auto z-10 border-r border-gray-300">
       <h1 className="text-2xl font-bold text-indigo-600 mb-6">Sauber</h1>
       <nav className="flex-1 mb-6 text-md">
         <ul className="space-y-4">
-          <li className="flex items-center gap-3 text-indigo-600 font-semibold">
-            <Home size={18}/> <Link to="/admin/dashboard">Dashboard</Link>
+          <li>
+            <NavLink
+              to="/admin/dashboard"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <Home size={18}/> Dashboard
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <ShoppingBag size={18}/> <Link to="/admin/orders">Order</Link>
+          <li>
+            <NavLink
+              to="/admin/orders"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <ShoppingBag size={18}/> Order
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <BadgeCent className="w-5 h-5 text-gray-600" /> <Link to="/admin/sales">Sales</Link>
+          <li>
+            <NavLink
+              to="/admin/sales"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <BadgeCent className="w-5 h-5" /> Sales
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <Users size={18}/> <Link to="/admin/customers">Customer</Link>
+          <li>
+            <NavLink
+              to="/admin/customers"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <Users size={18}/> Customer
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <Box size={18}/> <Link to="/admin/services">Services</Link>
+          <li>
+            <NavLink
+              to="/admin/services"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <Box size={18}/> Services
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <FileText size={18}/> <Link to="/admin/reports">Reports</Link>
+          <li>
+            <NavLink
+              to="/admin/reports"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <FileText size={18}/> Reports
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <CreditCard size={18}/> <Link to="/admin/payments">Payment</Link>
+          {/*
+          <li>
+            <NavLink
+              to="/admin/payments"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold' : 'text-gray-600'}`
+              }
+            >
+              <CreditCard size={18}/> Payment
+            </NavLink>
           </li>
-          <li className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 cursor-pointer">
-            <Settings size={18}/> <Link to="/admin/settings">Settings</Link>
+          */}
+          <li>
+            <NavLink
+              to="/admin/settings"
+              className={({ isActive }) =>
+                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
+              }
+            >
+              <Settings size={18}/> Settings
+            </NavLink>
           </li>
           <li className="flex items-center gap-3 text-white hover:text-white cursor-pointer bg-red-500 p-2 rounded text-sm justify-center lg:justify-start mt-10 text-center">
             Logout 
           </li>
         </ul>
       </nav>
-      <div className="mt-auto pt-4 shadow-md shadow-black/10 border border-gray-200 rounded-lg p-6 text-center space-y-2">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFcyssMbcvEkMiCDu8zrO9VuN-Yy1aW1vycA&s" alt="profile" className="w-12 h-12 rounded-full mx-auto" />
+      <div className="mt-auto pt-4 shadow-md  border border-black rounded-lg p-6 text-center space-y-2">
+        <img src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg" alt="profile" className="w-12 h-12 rounded-full mx-auto" />
         <h3 className="mt-2 text-black font-bold ">David Dadzie</h3>
         <p className="text-sm text-gray-400">admin</p>
         <a href="#" className="text-sm text-indigo-600 bg-indigo-100 hover:bg-indigo-200 rounded px-2 py-1">Edit Profile</a>

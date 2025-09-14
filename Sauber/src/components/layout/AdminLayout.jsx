@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../admin/Sidebar'
+import MobileMenu from '../admin/MobileMenu'
 
 function AdminLayout() {
   return (
@@ -14,6 +15,7 @@ function AdminLayout() {
       <div className="flex-1 lg:p-6 bg-gray-50 p-4">
         <Outlet /> {/* This renders Dashboard, Services, Users, etc. */}
       </div>
+      <MobileMenu />
     </div>
   )
 }

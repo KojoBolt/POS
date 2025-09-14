@@ -19,6 +19,7 @@ import AdminSales from "./components/admin/Sales";
 import AdminCustomers from "./components/admin/Customers";
 import Payment from "./components/admin/Payment";
 import Settings from "./components/admin/Settings";
+// import EditService from "./components/admin/EditService";
 
 // Cashier pages
 import CashierDashboard from "./components/cashier/Dashboard";
@@ -62,6 +63,7 @@ function App() {
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="payments" element={<Payment />} />
           <Route path="settings" element={<Settings />} />
+          {/* <Route path="services/edit/:id" element={<EditService />} /> */}
         </Route>
 
         {/* Cashier Routes */}
