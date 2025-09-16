@@ -14,9 +14,9 @@ export default function Customers() {
   const [deleteCustomer, setDeleteCustomer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [startDate, setStartDate] = useState(""); // For date filter
-  const [endDate, setEndDate] = useState(""); // For date filter
-  const [entries, setEntries] = useState(5); // Show Entries state
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState(""); 
+  const [entries, setEntries] = useState(5); 
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
