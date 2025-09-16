@@ -1,9 +1,13 @@
 import React from 'react'
+import Customers from '../admin/Customers'
 
-function Customers() {
+function CashierCustomers() {
   return (
-    <div>Customers</div>
+    <div>
+      
+      <Customers />
+    </div>
   )
 }
 
-export default Customers
+export default CashierCustomers

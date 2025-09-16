@@ -294,12 +294,12 @@ function Order() {
               </div>
 
               {/* Right Side - Checkout Summary */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 mb-12 lg:mb-0">
                 <div className="bg-white rounded-2xl shadow-lg border-gray-300 p-6 sticky top-4">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-semibold text-gray-900">Order Summary</h3>
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                    <span className="bg-blue-100 text-blue-800 text-[12px] lg:text-xs font-medium px-2.5 py-1 rounded-full text-center">
                       Service Bay No. {Math.floor(Math.random() * 50) + 1}
                     </span>
                   </div>
@@ -503,7 +503,7 @@ function Order() {
 
         {/* Ongoing Orders Tab */}
         {activeTab === "ongoing" && (
-          <div className="bg-white rounded-2xl shadow-lg border-gray-300 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border-gray-300 p-6 mb-12 lg:mb-0">
             <h2 className="text-xl font-bold mb-4">Ongoing Orders</h2>
             {loadingOrders ? (
               <div className="text-gray-500">Loading orders...</div>
@@ -511,7 +511,8 @@ function Order() {
               <div className="text-gray-500">No orders yet.</div>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                {/* Table for md+ screens */}
+                <div className="overflow-x-auto hidden md:block">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-gray-100">
@@ -595,6 +596,59 @@ function Order() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+                {/* Card layout for mobile screens */}
+                <div className="space-y-4 md:hidden">
+                  {orders.slice((ongoingPage-1)*ongoingPageSize, ongoingPage*ongoingPageSize).map((order) => (
+                    <div key={order.id} className="rounded-xl border border-gray-200 shadow p-4 bg-white">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="font-semibold text-base text-gray-900">{order.customerName}</div>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">{order.status}</span>
+                      </div>
+                      <div className="mb-2">
+                        <div className="text-xs text-gray-500 mb-1">Services</div>
+                        <ul className="space-y-1">
+                          {Array.isArray(order.services) && order.services.map((s, idx) => (
+                            <li key={s.id || idx} className="flex items-center gap-2">
+                              {s.imageUrl && (
+                                <img
+                                  src={s.imageUrl}
+                                  alt={s.name}
+                                  className="w-7 h-7 object-cover rounded border"
+                                />
+                              )}
+                              <span className="text-sm">{s.name}</span>
+                              <span className="text-xs text-gray-500">₵{s.price}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-gray-500">Total</span>
+                        <span className="font-semibold text-blue-700">₵{order.total}</span>
+                      </div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-gray-500">Payment</span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{order.paymentStatus}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {order.paymentStatus !== 'Paid' && (
+                          <button
+                            className="flex-1 px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                            onClick={() => handleMarkPaid(order.id)}
+                          >Mark Paid</button>
+                        )}
+                        <button
+                          className="flex-1 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                          onClick={() => handleDeleteOrder(order.id)}
+                        >Delete</button>
+                        <button
+                          className="flex-1 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs"
+                          onClick={() => setPrintOrder(order)}
+                        >Print Receipt</button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 {/* Pagination Controls */}
                 <div className="flex justify-center items-center gap-2 mt-4">

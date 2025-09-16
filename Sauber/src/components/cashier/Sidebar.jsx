@@ -18,7 +18,7 @@ const Sidebar = () => {
         <ul className="space-y-4">
           <li>
             <NavLink
-              to="/admin/dashboard"
+              to="/cashier/dashboard"
               className={({ isActive }) =>
                 `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
               }
@@ -28,17 +28,17 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/admin/orders"
+              to="/cashier/orders"
               className={({ isActive }) =>
                 `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
               }
             >
-              <ShoppingBag size={18}/> Order
+              <ShoppingBag size={18}/> Orders
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/admin/sales"
+              to="/cashier/sales"
               className={({ isActive }) =>
                 `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
               }
@@ -48,49 +48,17 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/admin/customers"
+              to="/cashier/customers"
               className={({ isActive }) =>
                 `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
               }
             >
-              <Users size={18}/> Customer
+              <Users size={18}/> Customers
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/admin/services"
-              className={({ isActive }) =>
-                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
-              }
-            >
-              <Box size={18}/> Services
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/admin/reports"
-              className={({ isActive }) =>
-                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
-              }
-            >
-              <FileText size={18}/> Reports
-            </NavLink>
-          </li>
-          {/*
-          <li>
-            <NavLink
-              to="/admin/payments"
-              className={({ isActive }) =>
-                `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold' : 'text-gray-600'}`
-              }
-            >
-              <CreditCard size={18}/> Payment
-            </NavLink>
-          </li>
-          */}
-          <li>
-            <NavLink
-              to="/admin/settings"
+              to="/cashier/settings"
               className={({ isActive }) =>
                 `flex items-center gap-3 hover:text-indigo-600 cursor-pointer ${isActive ? 'text-indigo-600 font-semibold bg-[#F4F7FF] py-3 px-2 rounded' : 'text-gray-600'}`
               }

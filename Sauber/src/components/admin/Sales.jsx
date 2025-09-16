@@ -47,8 +47,8 @@ export default function Sales() {
   );
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">Sales</h1>
           <p className="text-gray-500">View and manage all car service sales</p>
@@ -58,10 +58,39 @@ export default function Sales() {
           placeholder="Search by customer or service..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-white rounded-lg px-4 py-2 border border-gray-200 shadow-sm text-sm"
+          className="bg-white rounded-lg px-4 py-2 border border-gray-200 shadow-sm text-sm w-full sm:w-auto"
         />
       </div>
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+
+      {/* Mobile Card Layout */}
+      <div className="flex flex-col gap-4 md:hidden mb-12 lg-mb-0">
+        {loading ? (
+          <div className="text-center py-8 text-gray-400">Loading sales...</div>
+        ) : filteredSales.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">No sales found.</div>
+        ) : (
+          filteredSales.map((sale) => (
+            <div key={sale.id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2 border-l-4 border-gray-800s">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400">{sale.date}</span>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  sale.status === "Paid"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-yellow-100 text-yellow-600"
+                }`}>
+                  {sale.status}
+                </span>
+              </div>
+              <div className="font-semibold text-base">{sale.customer}</div>
+              <div className="text-sm text-gray-500">{sale.service}</div>
+              <div className="font-bold text-green-700 text-lg">₵{sale.amount}</div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <div className="bg-white rounded-lg shadow overflow-x-auto hidden md:block">
         <table className="w-full text-left">
           <thead className="bg-[#000] text-white text-sm">
             <tr>

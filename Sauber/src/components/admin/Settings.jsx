@@ -3,9 +3,12 @@ import { auth, db } from '../../firebase/config';
 import { onAuthStateChanged, updateProfile, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import useAuthStore from '../../store/authStore';
 
 const Settings = () => {
-    // --- State for current admin's profile ---
+    // --- State for current user's profile ---
+    // --- Get current role ---
+    const { role } = useAuthStore();
     const [user, setUser] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -87,7 +90,7 @@ const Settings = () => {
                 email: newUserEmail,
                 password: newUserPassword,
                 name: newUserName,
-                role: newUserRole, // Pass the selected role
+                role: newUserRole, 
             });
 
             if (result.data.success) {
@@ -110,7 +113,7 @@ const Settings = () => {
     }
 
     return (
-        <div className="lg:max-w-4xl lg:mx-auto p-8 w-full overflow-x-hidden">
+        <div className="lg:max-w-4xl lg:mx-auto p-8 w-full overflow-x-hidden mb-12 lg:mb-0">
             <h1 className="text-3xl font-bold text-gray-900 mb-5 mt-8">Settings</h1>
 
             {error && <div className="my-4 p-3 text-sm text-red-700 bg-red-100 rounded-md">{error}</div>}
@@ -145,42 +148,46 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* --- Add New User Section --- */}
-            <hr className="my-10 border-gray-300" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-1">
-                    <h2 className="text-xl font-semibold text-gray-900">Add New User</h2>
-                    <p className="mt-1 text-sm text-gray-600">Create a new admin or cashier account.</p>
+            {/* Only show Add New User if admin I am an admin*/}
+            {role === 'admin' && (
+              <>
+                <hr className="my-10 border-gray-300" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="md:col-span-1">
+                        <h2 className="text-xl font-semibold text-gray-900">Add New User</h2>
+                        <p className="mt-1 text-sm text-gray-600">Create a new admin or cashier account.</p>
+                    </div>
+                    <div className="md:col-span-2">
+                        <form onSubmit={handleCreateUser} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                <select value={newUserRole} onChange={(e) => setNewUserRole(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    <option value="admin">Admin</option>
+                                    <option value="cashier">Cashier</option>
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" disabled={isCreatingUser} className="bg-blue-600 text-white px-6 py-3 rounded font-medium hover:bg-blue-700 disabled:bg-gray-400">
+                                    {isCreatingUser ? 'Creating User...' : 'Create User'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div className="md:col-span-2">
-                    <form onSubmit={handleCreateUser} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                            <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                            <select value={newUserRole} onChange={(e) => setNewUserRole(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                <option value="admin">Admin</option>
-                                <option value="cashier">Cashier</option>
-                            </select>
-                        </div>
-                        <div className="text-right">
-                            <button type="submit" disabled={isCreatingUser} className="bg-blue-600 text-white px-6 py-3 rounded font-medium hover:bg-blue-700 disabled:bg-gray-400">
-                                {isCreatingUser ? 'Creating User...' : 'Create User'}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+              </>
+            )}
         </div>
     );
 };

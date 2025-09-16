@@ -1,9 +1,12 @@
 import React from 'react'
+import Dashboard from '../admin/dashboard/Dashboard'
 
-function Dashboard() {
+function CashierDashboard() {
   return (
-    <div>Dashboard</div>
+    <div>
+      <Dashboard />
+    </div>
   )
 }
 
-export default Dashboard
+export default CashierDashboard

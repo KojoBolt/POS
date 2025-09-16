@@ -22,46 +22,98 @@ export default function Reports() {
   const [totals, setTotals] = useState({ total: 0, daily: 0, weekly: 0, monthly: 0 });
 
   useEffect(() => {
-    // Sales Trend (last 7 days)
     const now = new Date();
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(now.getDate() - i);
-      days.push({
-        name: d.toLocaleDateString(undefined, { weekday: 'short' }),
-        date: d.toISOString().slice(0, 10),
-        sales: 0,
-      });
+    let trend = [];
+    let start;
+    let groupBy = 'day';
+    if (filter === 'daily') {
+      // Last 7 days
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        trend.push({
+          name: d.toLocaleDateString(undefined, { weekday: 'short' }),
+          key: d.toISOString().slice(0, 10),
+          sales: 0,
+        });
+      }
+      start = new Date(now);
+      start.setDate(now.getDate() - 6);
+      start.setHours(0,0,0,0);
+      groupBy = 'day';
+    } else if (filter === 'weekly') {
+      // Last 8 weeks
+      for (let i = 7; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(now.getDate() - i * 7);
+        const weekNum = getWeekNumber(d);
+        trend.push({
+          name: `W${weekNum}`,
+          key: `${d.getFullYear()}-W${weekNum}`,
+          sales: 0,
+        });
+      }
+      start = new Date(now);
+      start.setDate(now.getDate() - 7 * 7);
+      start.setHours(0,0,0,0);
+      groupBy = 'week';
+    } else {
+      // Monthly: last 12 months
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        trend.push({
+          name: d.toLocaleDateString(undefined, { month: 'short' }),
+          key: `${d.getFullYear()}-${d.getMonth() + 1}`,
+          sales: 0,
+        });
+      }
+      start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+      groupBy = 'month';
     }
-    const start = new Date(now);
-    start.setDate(now.getDate() - 6);
-    start.setHours(0,0,0,0);
+
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+      return weekNo;
+    }
+
     const q = query(
       collection(db, 'orders'),
       where('createdAt', '>=', start),
       orderBy('createdAt', 'asc')
     );
     const unsub = onSnapshot(q, (snapshot) => {
-      const trend = days.map(d => ({ ...d }));
       let total = 0, daily = 0, weekly = 0, monthly = 0;
-      // Service breakdown: Silver, Gold, Platin, Others
       const breakdown = { Silver: 0, Gold: 0, Platin: 0, Others: 0 };
       const todayStr = now.toISOString().slice(0, 10);
       const weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 6);
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      // Reset trend sales
+      trend = trend.map(t => ({ ...t, sales: 0 }));
       snapshot.forEach(doc => {
         const data = doc.data();
         if (typeof data.total === 'number' && data.createdAt && data.createdAt.toDate) {
-          const dateStr = data.createdAt.toDate().toISOString().slice(0, 10);
-          // Trend
-          const trendDay = trend.find(d => d.date === dateStr);
-          if (trendDay) trendDay.sales += data.total;
+          const dateObj = data.createdAt.toDate();
+          const dateStr = dateObj.toISOString().slice(0, 10);
+          // Grouping
+          let key = '';
+          if (groupBy === 'day') {
+            key = dateStr;
+          } else if (groupBy === 'week') {
+            const weekNum = getWeekNumber(dateObj);
+            key = `${dateObj.getFullYear()}-W${weekNum}`;
+          } else {
+            key = `${dateObj.getFullYear()}-${dateObj.getMonth() + 1}`;
+          }
+          const trendItem = trend.find(t => t.key === key);
+          if (trendItem) trendItem.sales += data.total;
           // Totals
           total += data.total;
           if (dateStr === todayStr) daily += data.total;
-          if (data.createdAt.toDate() >= weekAgo) weekly += data.total;
-          if (data.createdAt.toDate() >= monthStart) monthly += data.total;
+          if (dateObj >= weekAgo) weekly += data.total;
+          if (dateObj >= monthStart) monthly += data.total;
           // Breakdown by service name
           if (Array.isArray(data.services)) {
             data.services.forEach(service => {
@@ -84,10 +136,10 @@ export default function Reports() {
       ]);
     });
     return () => unsub();
-  }, []);
+  }, [filter]);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen mb-12 lg-mb-0">
       <h1 className="text-2xl font-bold mb-6">Sales Reports</h1>
 
       {/* Top Stats */}

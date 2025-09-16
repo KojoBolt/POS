@@ -193,7 +193,13 @@ const Dashboard = () => {
         <div className="lg:col-span-2 bg-white lg:p-6 p-4 rounded-2xl shadow-md flex flex-col lg:h-[500px] m-auto lg:m-0 w-full">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h3 className="lg:text-lg font-semibold text-sm">Daily Sales</h3>
+              <h3 className="lg:text-lg font-semibold text-sm">
+                {range === 'today' && 'Daily Sales'}
+                {range === 'yesterday' && 'Yesterday Sales'}
+                {range === 'week' && 'Weekly Sales'}
+                {range === 'month' && 'Monthly Sales'}
+                {range === 'year' && 'Yearly Sales'}
+              </h3>
               <p className="text-2xl font-bold mt-1">₵{dailySales.toLocaleString()}</p>
               {/* Variance indicator vs last week */}
               {lastWeekSales > 0 ? (
