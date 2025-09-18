@@ -9,7 +9,7 @@ const Sidebar = () => {
   const { user, role } = useAuthStore();
   const handleLogout = async () => {
     await signOut(auth);
-    navigate("/login");
+    navigate("/");
   };
   return (
     <div className="fixed left-0 top-0 w-64 bg-white shadow-md h-screen p-4 lg:flex flex-col hidden overflow-y-auto z-10 border-r border-gray-300">
