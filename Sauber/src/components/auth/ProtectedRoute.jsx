@@ -5,16 +5,16 @@ export default function ProtectedRoute({ allowedRoles, children }) {
   const { user, role } = useAuthStore();
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   if (!allowedRoles.includes(role)) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return children ? children : <Outlet />;
 }
-import React from 'react'
+
 
 
 

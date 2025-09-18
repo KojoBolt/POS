@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../../firebase/config";
 
 import car from "../../assets/image/car.png";
@@ -59,14 +59,18 @@ const Login = () => {
       }
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+        setError("Wrong password or email");
+      } else {
+        setError("Failed to sign in. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+  <div className="min-h-screen bg-gray-50 flex">
       {/* Left Side - Illustration */}
       <div className="flex-1 bg-gradient-to-br from-purple-50 to-blue-50 lg:flex flex-col justify-center items-center p-8 relative overflow-hidden max-w-full hidden">
         <div className="absolute top-8 left-8">
@@ -84,9 +88,13 @@ const Login = () => {
 
       {/* Right Side - Form */}
       <div className="lg:w-[40%] bg-white flex flex-col justify-center p-8 w-full">
+        {/* Mobile Logo Above Form */}
+        <div className="block lg:hidden mb-6 flex justify-center">
+          <img src={logo} alt="Logo" className="w-24 h-16" />
+        </div>
         <div className="max-w-sm mx-auto w-full">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Get Started</h1>
-          <p className="text-gray-600 mb-8">Login to access your account</p>
+          <p className="text-gray-600 mb-8">You don't have an account? <Link to="/register" className="text-indigo-600 hover:underline">Sign up</Link></p>
 
           <div className="space-y-6">
             {/* Email Input */}

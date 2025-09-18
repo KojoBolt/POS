@@ -26,6 +26,11 @@ function Order() {
   const [services, setServices] = useState([]);
   const [orders, setOrders] = useState([]);
   const [customer, setCustomer] = useState('');
+  // Vehicle Info state
+  const [vehicleMake, setVehicleMake] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
+  const [vehicleYear, setVehicleYear] = useState('');
+  const [vehiclePlate, setVehiclePlate] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
   const [note, setNote] = useState('');
   const [showAddItemModal, setShowAddItemModal] = useState(false);
@@ -131,11 +136,17 @@ function Order() {
   const [lastCreatedOrder, setLastCreatedOrder] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!customer.trim() || selectedServices.length === 0) return;
+  if (!customer.trim() || selectedServices.length === 0) return;
+  // Validate vehicle info (optional: require some fields)
     setIsPaying(true);
     try {
       const orderData = {
         customerName: customer,
+        // Vehicle Info
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehiclePlate,
         services: selectedServices.map((s) => ({
           id: s.id,
           name: s.name,
@@ -152,9 +163,13 @@ function Order() {
       const docRef = await addDoc(collection(db, 'orders'), orderData);
       const newOrder = { id: docRef.id, ...orderData, createdAt: new Date() };
       setOrders((prev) => [newOrder, ...prev]);
-      setCustomer('');
-      setSelectedServices([]);
-      setNote('');
+  setCustomer('');
+  setSelectedServices([]);
+  setNote('');
+  setVehicleMake('');
+  setVehicleModel('');
+  setVehicleYear('');
+  setVehiclePlate('');
       setLastCreatedOrder(newOrder); // Save for printing
       setShowSuccess(true);
     } catch (err) {
@@ -234,6 +249,49 @@ function Order() {
                         placeholder="Enter customer name"
                       />
                     </div>
+                    {/* Vehicle Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Make</label>
+                        <input
+                          type="text"
+                          value={vehicleMake}
+                          onChange={e => setVehicleMake(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                          placeholder="e.g. Toyota"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Model</label>
+                        <input
+                          type="text"
+                          value={vehicleModel}
+                          onChange={e => setVehicleModel(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                          placeholder="e.g. Corolla"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                        <input
+                          type="text"
+                          value={vehicleYear}
+                          onChange={e => setVehicleYear(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                          placeholder="e.g. 2020"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Plate Number</label>
+                        <input
+                          type="text"
+                          value={vehiclePlate}
+                          onChange={e => setVehiclePlate(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                          placeholder="e.g. GR-1234-21"
+                        />
+                      </div>
+                    </div>
 
                     {/* Services Selection */}
                     <div>
@@ -305,11 +363,33 @@ function Order() {
                   </div>
 
                   {/* Customer Info */}
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <p className="text-sm text-gray-600 mb-1">Customer</p>
                     <p className="font-medium text-gray-900">
                       {customer || 'Enter customer name'}
                     </p>
+                  </div>
+                  {/* Vehicle Info */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Vehicle Info</h4>
+                    <div className="space-y-1 text-sm">
+                      <div>
+                        <span className="text-gray-600">Make: </span>
+                        <span className="font-medium text-gray-900">{vehicleMake || '-'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Model: </span>
+                        <span className="font-medium text-gray-900">{vehicleModel || '-'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Year: </span>
+                        <span className="font-medium text-gray-900">{vehicleYear || '-'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Plate: </span>
+                        <span className="font-medium text-gray-900">{vehiclePlate || '-'}</span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Items */}

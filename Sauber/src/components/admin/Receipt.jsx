@@ -22,13 +22,24 @@ const Receipt = ({ order, onAfterPrint }) => {
 
       <div
         ref={componentRef}
-        className="w-[300px] mx-auto bg-white text-black font-mono text-sm p-4 border border-gray-300 printable-receipt"
+  className="w-[300px] mx-auto bg-white text-black font-mono text-sm p-4 border border-gray-300 printable-receipt"
       >
         <div className="text-center mb-2">
           <h2 className="font-bold">Sauber</h2>
           <p>Address: Accra Ghana, 23-10</p>
-          <p>Tel: 11223344</p>
+          <p>Email: sauber@gmail.com</p>
         </div>
+
+        {/* Vehicle Info */}
+        {(order?.vehicleMake || order?.vehicleModel || order?.vehicleYear || order?.vehiclePlate) && (
+          <div className="mb-2 text-xs">
+            <div><span className="font-semibold">Vehicle:</span></div>
+            <div>Make: {order?.vehicleMake || '-'}</div>
+            <div>Model: {order?.vehicleModel || '-'}</div>
+            <div>Year: {order?.vehicleYear || '-'}</div>
+            <div>Plate: {order?.vehiclePlate || '-'}</div>
+          </div>
+        )}
 
         <p className="text-center font-bold my-2">CASH RECEIPT</p>
         <p className="border-t border-dashed my-2"></p>

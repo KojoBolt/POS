@@ -13,7 +13,7 @@ function AdminLayout() {
       
       {/* Main content on the right */}
       <div className="flex-1 lg:p-6 bg-gray-50 p-4">
-        <Outlet /> {/* This renders Dashboard, Services, Users, etc. */}
+        <Outlet /> 
       </div>
       <MobileMenu />
     </div>

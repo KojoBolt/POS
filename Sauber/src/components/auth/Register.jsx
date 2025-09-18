@@ -61,7 +61,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+  <div className="min-h-screen bg-gray-50 flex">
       {/* Left Side */}
       <div className="flex-1 bg-gradient-to-br from-purple-50 to-blue-50 lg:flex flex-col justify-center items-center p-8 relative overflow-hidden hidden">
         <div className="absolute top-8 left-8">
@@ -84,7 +84,11 @@ const Register = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="lg:w-[40%] bg-white flex flex-col justify-center p-8">
+      <div className="lg:w-[40%] bg-white flex flex-col justify-center p-8 w-full">
+        {/* Mobile Logo Above Form */}
+        <div className="block lg:hidden mb-6 flex justify-center">
+          <img src={logo} alt="Logo" className="w-24 h-16" />
+        </div>
         <div className="max-w-sm mx-auto w-full">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Get Started</h1>
           <p className="text-gray-600 mb-8">
